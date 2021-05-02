@@ -3,6 +3,7 @@
 #endif
 #include <avr/io.h>
 #include <util/delay.h>  
+#include <stdlib.h>
 #define LCD_PORT PORTC //define the connected data port
 #define rs PB4
 #define en PB5
@@ -118,7 +119,7 @@ char keyfind(void){
 		}while(col1 == 0x07);       // if any button is pressed then do the following
 		
 		// now check for rows
-		PORTD = 0xE7;            // check for pressed key in 1st row 
+		PORTD = 0xE7;            /* check for pressed key in 1st row */
 		asm("NOP");
 		col1 = (PIND & 0x0F);
 		if(col1 != 0x07)
@@ -126,7 +127,7 @@ char keyfind(void){
 			row1 = 0;
 			break;
 		}
-		PORTD = 0xD7;		//check for pressed key in 2nd row 
+		PORTD = 0xD7;		/* check for pressed key in 2nd row */
 		asm("NOP");
 		col1 = (PIND & 0x07);
 		if(col1 != 0x07)
@@ -135,7 +136,7 @@ char keyfind(void){
 			break;
 		}
 		
-		PORTD = 0xB7;		// check for pressed key in 3rd row 
+		PORTD = 0xB7;		/* check for pressed key in 3rd row */
 		asm("NOP");
 		col1 = (PIND & 0x07);
 		if(col1 != 0x07)
@@ -143,7 +144,7 @@ char keyfind(void){
 			row1 = 2;
 			break;
 		}
-		PORTD = 0x77;		// check for pressed key in 4th row 
+		PORTD = 0x77;		/* check for pressed key in 4th row */
 		asm("NOP");
 		col1 = (PIND & 0x07);
 		if(col1 != 0x0F7)
@@ -152,7 +153,6 @@ char keyfind(void){
 			break;
 		}
 	}
-	//return the corresponding cahracter of the pressed key
 	if(col1 == 0x06){
 		return(keypad[row1][0]);
 	}
@@ -163,12 +163,11 @@ char keyfind(void){
 		return(keypad[row1][2]);
 	}
 }
-//function to initialize the ADC pins
 void ADC_Init()
 {
 	DDRC &=~(1<<5);			// Make ADC 5 port as input 
-	ADCSRA = 0x87;			// Enable ADC, fr/128  
-	ADMUX = 0x45;			// Vref: Avcc, ADC channel: 5 
+	ADCSRA = 0x87;			// Enable ADC, fr/128 
+	ADMUX = 0x45;			// Vref: Avcc, ADC channel: 5
 	
 }
 
@@ -176,13 +175,13 @@ int ADC_Read(char channel)
 {
 	int Ain,AinLow;
 	
-	ADMUX=ADMUX|(channel & 0x0f);	/* Set input channel to read */
+	ADMUX|=(channel & 0x0F);	// Set input channel to read 
 
-	ADCSRA |= (1<<ADSC);		//start conversion 
-	while((ADCSRA&(1<<ADIF))==0);	// Monitor end of conversion interrupt
+	ADCSRA |= (1<<ADSC);		// Start conversion 
+	while((ADCSRA&(1<<ADIF))==0);	// Monitor end of conversion interrupt 
 	
 	_delay_us(10);
-	AinLow = (int)ADCL;		// Read lower byte
+	AinLow = (int)ADCL;		//Read lower byte
 	Ain = (int)ADCH*256;		// Read higher 2 bits and Multiply with weight 
 	Ain = Ain + AinLow;				
 	return(Ain);			// Return digital value
@@ -191,8 +190,11 @@ int ADC_Read(char channel)
 /*function for the calibration mode*/
 void CALIBRATION(void){
 	ADC_Init();
+	DDRB|=(1<<0); // make the required connected pins as output pins
+	DDRC|=(1<<4);
+	DDRD|=(1<<3);
 	LCD_Clear();
-	lcd_command(0x80);
+	lcd_command(0x80); //display some useful messages
 	LCD_STRING("Calibrating");
 	lcd_command(0xC0);
 	LCD_STRING("Red Surface");
@@ -200,33 +202,32 @@ void CALIBRATION(void){
 	LCD_Clear();
 	lcd_command(0x80);
 	LCD_STRING("Press # to start");
+	// this calibration will not start until we press the '#' button
 	while (true){
-		char key2=keyfind(); 
+		char key2=keyfind();
 		if (key2=='#'){
-			DDRB|=(1<<0);
-			DDRC|=(1<<4);
 			LCD_Clear();
 			lcd_command(0x80);
 			LCD_STRING("Calibrating");
-			PORTD |=(1<<3);
+			PORTD |=(1<<3); //light the red color of the RGB LED
 			PORTB &=~(1<<0);
 			PORTC &=~(1<<4);
-			for (int r=1;r<=10;r++){
-				RED_HIGH+=ADC_Read('5');
+			for (int r=1;r<=10;r++){ //get the RED value from the surface(10 values 
+				RED_HIGH+=ADC_Read('5'); //to ensure the accuracy 
 				_delay_ms(100);
 			}
 			PORTD &=~(1<<3);
 			PORTB |=(1<<0);
 			PORTC &=~(1<<4);
 			for (int r=1;r<=10;r++){
-				GREEN_LOW+=ADC_Read('5');
+				GREEN_LOW+=ADC_Read('5'); //get 10 values for the Green color from red surface
 				_delay_ms(100);
 			}
 			PORTD &=~(1<<3);
 			PORTB &=~(1<<0);
 			PORTC |=(1<<4);
 			for (int r=1;r<=10;r++){
-				BLUE_LOW+=ADC_Read('5');
+				BLUE_LOW+=ADC_Read('5'); //get ten readings for the Blue color from red surface
 				_delay_ms(100);
 			}
 			break;
@@ -244,12 +245,10 @@ void CALIBRATION(void){
 	_delay_ms(1000);
 	LCD_Clear();
 	lcd_command(0x80);
-	LCD_STRING("Press # to start");
+	LCD_STRING("Press # to start"); //same thing for the green surface as the red surface
 	while (true){
 		char key3=keyfind();
 		if (key3=='#'){
-			DDRB|=(1<<0);
-			DDRC|=(1<<4);
 			LCD_Clear();
 			lcd_command(0x80);
 			LCD_STRING("Calibrating");
@@ -289,12 +288,10 @@ void CALIBRATION(void){
 	_delay_ms(1000);
 	LCD_Clear();
 	lcd_command(0x80);
-	LCD_STRING("Press # to start");
+	LCD_STRING("Press # to start"); // same procedure for the Blue Surface
 	while (true){
 		char key4=keyfind();
 		if (key4=='#'){
-			DDRB|=(1<<0);
-			DDRC|=(1<<4);
 			LCD_Clear();
 			lcd_command(0x80);
 			LCD_STRING("Calibrating");
@@ -329,6 +326,62 @@ void CALIBRATION(void){
 	LCD_Clear();
 	LCD_print();
 }
+//define a function to do the sensing part
+void SENSING_MODE(void){
+	char *REDS;
+	char *GREENS;
+	char *BLUES;
+	int RED=0;
+	int GREEN=0;
+	int BLUE=0;
+	ADC_Init();
+	LCD_Clear();
+	lcd_command(0x83);
+	LCD_STRING("work is in");
+	lcd_command(0xC4);
+	LCD_STRING("progress");
+	PORTD |=(1<<3);
+	PORTB &=~(1<<0);
+	PORTC &=~(1<<4);
+	for (int r=1;r<=10;r++){//sense the red color intensity of the given surface
+		RED+=ADC_Read('5');
+		_delay_ms(100);
+	}
+	PORTD &=~(1<<3);
+	PORTB |=(1<<0);
+	PORTC &=~(1<<4);
+	for (int r=1;r<=10;r++){ // sense the green color intensity of the surface
+		GREEN+=ADC_Read('5');
+		_delay_ms(100);
+	}
+	 PORTD &=~(1<<3);
+	 PORTB &=~(1<<0);
+	 PORTC |=(1<<4);
+	 for (int r=1;r<=10;r++){ //sense the green color intensity of the Blue surface
+		 BLUE+=ADC_Read('5');
+		 _delay_ms(100);
+	 }
+	 //convert the measured values to a more reliable region
+	 RED1=((RED/10)-(RED_LOW/20))*(255.)/(RED_HIGH/10-RED_LOW/20);
+	 BLUE1=((BLUE/10)-(BLUE_LOW/20))*(255.)/(BLUE_HIGH/10-BLUE_LOW/20);
+	 GREEN1=((GREEN/10)-(GREEN_LOW/20))*(255.)/(GREEN_HIGH/10-GREEN_LOW/20);
+	 LCD_Clear();
+	 lcd_command(0x80);
+	 //display those values on the LCD screen
+	 LCD_STRING("  R    G    B");
+	 lcd_command(0xC1);
+	 itoa(RED1,REDS,10);//convert integer value to a string
+	 LCD_STRING(REDS);
+	 lcd_command(0xC6);
+	 itoa(GREEN1,GREENS,10);
+	 LCD_STRING(GREENS);
+	 lcd_command(0xCB);
+	 itoa(BLUE1,BLUES,10);
+	 LCD_STRING(BLUES);
+	 _delay_ms(5000);
+	 LCD_Clear();
+	 LCD_print();
+ }
 
 int main(void)
 {
@@ -345,8 +398,9 @@ int main(void)
 			if (key=='1'){
 				CALIBRATION();
 			}
+			else if(key=='2'){
+				SENSING_MODE();
+			}
 		}
 	}
 }
-
-
