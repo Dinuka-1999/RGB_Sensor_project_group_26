@@ -118,7 +118,7 @@ char keyfind(void){
 		}while(col1 == 0x07);       // if any button is pressed then do the following
 		
 		// now check for rows
-		PORTD = 0xE7;            /* check for pressed key in 1st row */
+		PORTD = 0xE7;            // check for pressed key in 1st row 
 		asm("NOP");
 		col1 = (PIND & 0x0F);
 		if(col1 != 0x07)
@@ -126,7 +126,7 @@ char keyfind(void){
 			row1 = 0;
 			break;
 		}
-		PORTD = 0xD7;		/* check for pressed key in 2nd row */
+		PORTD = 0xD7;		//check for pressed key in 2nd row 
 		asm("NOP");
 		col1 = (PIND & 0x07);
 		if(col1 != 0x07)
@@ -135,7 +135,7 @@ char keyfind(void){
 			break;
 		}
 		
-		PORTD = 0xB7;		/* check for pressed key in 3rd row */
+		PORTD = 0xB7;		// check for pressed key in 3rd row 
 		asm("NOP");
 		col1 = (PIND & 0x07);
 		if(col1 != 0x07)
@@ -143,7 +143,7 @@ char keyfind(void){
 			row1 = 2;
 			break;
 		}
-		PORTD = 0x77;		/* check for pressed key in 4th row */
+		PORTD = 0x77;		// check for pressed key in 4th row 
 		asm("NOP");
 		col1 = (PIND & 0x07);
 		if(col1 != 0x0F7)
@@ -152,6 +152,7 @@ char keyfind(void){
 			break;
 		}
 	}
+	//return the corresponding cahracter of the pressed key
 	if(col1 == 0x06){
 		return(keypad[row1][0]);
 	}
@@ -162,11 +163,12 @@ char keyfind(void){
 		return(keypad[row1][2]);
 	}
 }
+//function to initialize the ADC pins
 void ADC_Init()
 {
-	DDRC &=~(1<<5);			/* Make ADC 5 port as input */
-	ADCSRA = 0x87;			/* Enable ADC, fr/128  */
-	ADMUX = 0x45;			/* Vref: Avcc, ADC channel: 5 */
+	DDRC &=~(1<<5);			// Make ADC 5 port as input 
+	ADCSRA = 0x87;			// Enable ADC, fr/128  
+	ADMUX = 0x45;			// Vref: Avcc, ADC channel: 5 
 	
 }
 
@@ -176,15 +178,14 @@ int ADC_Read(char channel)
 	
 	ADMUX=ADMUX|(channel & 0x0f);	/* Set input channel to read */
 
-	ADCSRA |= (1<<ADSC);		/* Start conversion */
-	while((ADCSRA&(1<<ADIF))==0);	/* Monitor end of conversion interrupt */
+	ADCSRA |= (1<<ADSC);		//start conversion 
+	while((ADCSRA&(1<<ADIF))==0);	// Monitor end of conversion interrupt
 	
 	_delay_us(10);
-	AinLow = (int)ADCL;		/* Read lower byte*/
-	Ain = (int)ADCH*256;		/* Read higher 2 bits and 
-					Multiply with weight */
+	AinLow = (int)ADCL;		// Read lower byte
+	Ain = (int)ADCH*256;		// Read higher 2 bits and Multiply with weight 
 	Ain = Ain + AinLow;				
-	return(Ain);			/* Return digital value*/
+	return(Ain);			// Return digital value
 }
 
 /*function for the calibration mode*/
@@ -200,7 +201,7 @@ void CALIBRATION(void){
 	lcd_command(0x80);
 	LCD_STRING("Press # to start");
 	while (true){
-		char key2=keyfind();
+		char key2=keyfind(); 
 		if (key2=='#'){
 			DDRB|=(1<<0);
 			DDRC|=(1<<4);
