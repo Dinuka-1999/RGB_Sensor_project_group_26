@@ -1,1 +1,1 @@
-# RGB_Sensor_project_2SEM
+# RGB_Sensor_project_group_26
