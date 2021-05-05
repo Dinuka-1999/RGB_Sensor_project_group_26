@@ -4,13 +4,15 @@
 #include <avr/io.h>
 #include <util/delay.h>  
 #include <stdlib.h>
+#include <math.h>
+#include <avr/interrupt.h>
 #define LCD_PORT PORTC //define the connected data port
 #define rs PB4
 #define en PB5
-
-long  int RED1,RED_HIGH=0,RED_LOW=0;
-long  int GREEN1,GREEN_HIGH=0,GREEN_LOW=0;
-long  int BLUE1,BLUE_HIGH=0,BLUE_LOW=0;
+// initialized values for some readings
+long  int RED1,RED_HIGH=0,RED_LOW=0,RED_DUTY_CYCLE;
+long  int GREEN1,GREEN_HIGH=0,GREEN_LOW=0,GREEN_DUTY_CYCLE;
+long  int BLUE1,BLUE_HIGH=0,BLUE_LOW=0,BLUE_DUTY_CYCLE;
 
 unsigned char col1, row1;
 unsigned char keypad[4][3]={{'1','2','3'},
@@ -28,6 +30,8 @@ char keyfind(void);
 void ADC_Init(void);
 int ADC_Read(char channel);
 void CALIBRATION(void);
+void SENSING_MODE(void);
+void LIGHT_RGB_LED(void);
 
 /*function to give commands*/
 void lcd_command(unsigned char command){
@@ -82,29 +86,7 @@ void LCD_Clear(void){
 	lcd_command(0x80); //set the cursor to home position
 }
 /*user defined function to print the initial data instructions on the display*/
-void LCD_print(void){
-	LCD_Clear();
-	lcd_command(0x80);
-	LCD_STRING("Select the mode!");
-	lcd_command(0xC0); //set the cursor at the starting position of the second line
-	LCD_STRING("Select number");
-	_delay_ms(1000);
-	LCD_Clear();
-	lcd_command(0x80);
-	LCD_STRING("1:Calibration Mode");
-	lcd_command(0xC0);
-	LCD_STRING("2:Sensing Mode");
-	for (int r=1;r<4;r++){
-		_delay_ms(1000);
-		lcd_command(0x18); //shift the code to left
-	}
-	LCD_Clear();
-	lcd_command(0x80);
-	LCD_STRING("3:Light the RGB");
-	lcd_command(0xC2); //set  the cursor at the 2nd row 3rd column
-	LCD_STRING("LED");
-	_delay_ms(1000);
-}
+
 char keyfind(void){
 	
 	while(1){
@@ -117,7 +99,7 @@ char keyfind(void){
 			_delay_ms(40);
 			col1 = (PIND & 0x07);    // read status of column
 		}while(col1 == 0x07);       // if any button is pressed then do the following
-		
+		_delay_ms(20);
 		// now check for rows
 		PORTD = 0xE7;            /* check for pressed key in 1st row */
 		asm("NOP");
@@ -189,10 +171,10 @@ int ADC_Read(char channel)
 
 /*function for the calibration mode*/
 void CALIBRATION(void){
-	ADC_Init();
 	DDRB|=(1<<0); // make the required connected pins as output pins
 	DDRC|=(1<<4);
 	DDRD|=(1<<3);
+	ADC_Init();
 	LCD_Clear();
 	lcd_command(0x80); //display some useful messages
 	LCD_STRING("Calibrating");
@@ -328,12 +310,10 @@ void CALIBRATION(void){
 }
 //define a function to do the sensing part
 void SENSING_MODE(void){
-	char *REDS;
-	char *GREENS;
-	char *BLUES;
-	int RED=0;
-	int GREEN=0;
-	int BLUE=0;
+	char REDs[3];
+	char GREENs[3];
+	char BLUEs[3];
+	int RED=0,GREEN=0,BLUE=0;
 	ADC_Init();
 	LCD_Clear();
 	lcd_command(0x83);
@@ -354,13 +334,14 @@ void SENSING_MODE(void){
 		GREEN+=ADC_Read('5');
 		_delay_ms(100);
 	}
-	 PORTD &=~(1<<3);
-	 PORTB &=~(1<<0);
-	 PORTC |=(1<<4);
-	 for (int r=1;r<=10;r++){ //sense the green color intensity of the Blue surface
+	PORTD &=~(1<<3);
+	PORTB &=~(1<<0);
+    PORTC |=(1<<4);
+	for (int r=1;r<=10;r++){ //sense the green color intensity of the Blue surface
 		 BLUE+=ADC_Read('5');
 		 _delay_ms(100);
 	 }
+
 	 //convert the measured values to a more reliable region
 	 RED1=((RED/10)-(RED_LOW/20))*(255.)/(RED_HIGH/10-RED_LOW/20);
 	 BLUE1=((BLUE/10)-(BLUE_LOW/20))*(255.)/(BLUE_HIGH/10-BLUE_LOW/20);
@@ -370,21 +351,171 @@ void SENSING_MODE(void){
 	 //display those values on the LCD screen
 	 LCD_STRING("  R    G    B");
 	 lcd_command(0xC1);
-	 itoa(RED1,REDS,10);//convert integer value to a string
-	 LCD_STRING(REDS);
+	 itoa(RED1,REDs,10);//convert integer value to a string
+	 LCD_STRING(REDs);
 	 lcd_command(0xC6);
-	 itoa(GREEN1,GREENS,10);
-	 LCD_STRING(GREENS);
+	 itoa(GREEN1,GREENs,10);
+	 LCD_STRING(GREENs);
 	 lcd_command(0xCB);
-	 itoa(BLUE1,BLUES,10);
-	 LCD_STRING(BLUES);
-	 _delay_ms(5000);
+	 itoa(BLUE1,BLUEs,10);
+	 LCD_STRING(BLUEs);
+	 _delay_ms(1000);
 	 LCD_Clear();
 	 LCD_print();
  }
-
+ void BLUE_light(void){
+	 DDRB|=(1<<3);
+	 TCCR2A=(1<<COM2A1)|(1<<WGM20)|(1<<WGM21); //set the OC2A port for fast PMW non inverting method
+	 TIMSK2=(1<<TOIE2);								
+	 OCR2A=BLUE_DUTY_CYCLE; // set the duty cycle 
+	 sei();
+	 TCCR2B=(1<<CS22)|(1<<CS21)|(1<<CS20);
+ }
+ void GREEN_RED_light(void){
+	 DDRB|=(1<<2)|(1<<1); //set the OC1A and OC1B for fast pwm mode
+	 TCCR1A=(1<<COM1B1)|(1<<WGM12)|(1<<WGM10)|(1<<COM1A1);
+	 TIMSK1 =(1<<TOIE1);
+	 OCR1A=RED_DUTY_CYCLE;
+	 OCR1B=GREEN_DUTY_CYCLE;
+	 sei();
+	 TCCR1B=(1<<CS10)|(1<<CS12);
+ }
+void LIGHT_RGB_LED(void){
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Enter RGB values");
+	_delay_ms(1000);
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Enter R value");
+	int val1=0;
+	int power1=0;
+	while (1){
+		char key1=keyfind();
+		/*if we have pressed a number then execute the following*/
+		if (key1){
+			val1+=(key1-48)*pow(10,2-power1);
+			power1++;
+			_delay_ms(60);
+		}
+		if (power1==3){
+			/*if the entered value is greater than
+			then display the following message to enter a new number*/
+			if (val1>255){
+				LCD_Clear();
+				lcd_command(0x80);
+				LCD_STRING("Invalid Value");
+				lcd_command(0xC0);
+				LCD_STRING("Enter a new val");
+				_delay_ms(1000);
+				LCD_Clear();
+				lcd_command(0x80);
+				LCD_STRING("Enter R value");
+				val1=0;
+				power1=0;
+			}
+			//if the entered number is in the 0-255 range then break the loop
+			else{
+				RED1=val1;
+				break;
+			}
+		}
+	}
+	val1=0;
+	power1=0;
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Done");
+	_delay_ms(1000);
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Enter G value");
+	// same thing what we did for red
+	while (1){
+		char key1=keyfind();
+		if (key1){
+			val1+=(key1-48)*pow(10,2-power1);
+			power1++;
+			_delay_ms(60);
+		}
+		if (power1==3){
+			if (val1>255){
+				LCD_Clear();
+				lcd_command(0x80);
+				LCD_STRING("Invalid Value");
+				lcd_command(0xC0);
+				LCD_STRING("Enter a new val");
+				_delay_ms(1000);
+				LCD_Clear();
+				lcd_command(0x80);
+				LCD_STRING("Enter G value");
+				val1=0;
+				power1=0;
+			}
+			else{
+				GREEN1=val1;
+				break;
+			}
+		}
+	}
+	power1=0;
+	val1=0;
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Done");
+	_delay_ms(1000);
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Enter B value");
+	//same thing that we did for red
+	while (1){
+		char key1=keyfind();
+		if (key1){
+			val1+=(key1-48)*pow(10,2-power1);
+			power1++;
+			_delay_ms(60);
+		}
+		if (power1==3){
+			if (val1>255){
+				LCD_Clear();
+				lcd_command(0x80);
+				LCD_STRING("Invalid Value");
+				lcd_command(0xC0);
+				LCD_STRING("Enter a new val");
+				_delay_ms(1000);
+				LCD_Clear();
+				lcd_command(0x80);
+				LCD_STRING("Enter B value");
+				val1=0;
+				power1=0;
+			}
+			else{
+				BLUE1=val1;
+				break;
+			}
+		}
+	}
+	//write pwm values
+	BLUE_light();
+	GREEN_RED_light();
+	RED_DUTY_CYCLE=RED1;
+	GREEN_DUTY_CYCLE=GREEN1;
+	BLUE_DUTY_CYCLE=BLUE1;
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Done");
+	_delay_ms(1000);
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Thanks for using");
+	lcd_command(0xC0);
+	LCD_STRING("the device");
+	_delay_ms(5000);
+	LCD_Clear();
+	LCD_print();
+}
 int main(void)
-{
+{	
 	LCD_INIT();
 	lcd_command(0x82);
 	LCD_STRING("Hello world!");
@@ -392,7 +523,7 @@ int main(void)
 	LCD_STRING("Welcome!");
 	_delay_ms(1000);
 	LCD_print();
-	while(true){
+	while(1){
 		char key=keyfind();
 		if (key){
 			if (key=='1'){
@@ -401,6 +532,41 @@ int main(void)
 			else if(key=='2'){
 				SENSING_MODE();
 			}
+			else if(key=='3'){
+				LIGHT_RGB_LED();
+			}
+			
 		}
 	}
+}
+//to control the overflow of pwm 
+ISR(TIMER1_OVF_vect){
+	OCR1B=GREEN_DUTY_CYCLE;
+	OCR1A=RED_DUTY_CYCLE;
+}
+ISR(TIMER2_OVF_vect){
+	OCR2A=BLUE_DUTY_CYCLE;
+}
+void LCD_print(void){
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("Select the mode!");
+	lcd_command(0xC0); //set the cursor at the starting position of the second line
+	LCD_STRING("Select number");
+	_delay_ms(1000);
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("1:Calibration");
+	lcd_command(0xC2);
+	LCD_STRING("Mode");
+	_delay_ms(1000);
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("2:Sensing Mode");
+	_delay_ms(1000);
+	LCD_Clear();
+	lcd_command(0x80);
+	LCD_STRING("3:Light the RGB");
+	lcd_command(0xC2); //set  the cursor at the 2nd row 3rd column
+	LCD_STRING("LED");
 }
