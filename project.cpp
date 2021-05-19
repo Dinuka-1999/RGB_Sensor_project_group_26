@@ -218,6 +218,9 @@ void CALIBRATION(void){
 	LCD_Clear();
 	lcd_command(0x80);
 	LCD_STRING("Done!");
+	PORTD &=~(1<<3);
+	PORTB &=~(1<<0);
+	PORTC &=~(1<<4);
 	_delay_ms(1000);
 	LCD_Clear();
 	lcd_command(0x80);
@@ -261,6 +264,9 @@ void CALIBRATION(void){
 	LCD_Clear();
 	lcd_command(0x80);
 	LCD_STRING("Done!");
+	PORTD &=~(1<<3);
+	PORTB &=~(1<<0);
+	PORTC &=~(1<<4);
 	_delay_ms(1000);
 	LCD_Clear();
 	lcd_command(0x80);
@@ -304,6 +310,9 @@ void CALIBRATION(void){
 	LCD_Clear();
 	lcd_command(0x80);
 	LCD_STRING("Done!");
+	PORTD &=~(1<<3);
+	PORTB &=~(1<<0);
+	PORTC &=~(1<<4);
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_print();
@@ -341,7 +350,9 @@ void SENSING_MODE(void){
 		 BLUE+=ADC_Read('5');
 		 _delay_ms(100);
 	 }
-
+	PORTD &=~(1<<3);
+	PORTB &=~(1<<0);
+	PORTC &=~(1<<4);
 	 //convert the measured values to a more reliable region
 	 RED1=((RED/10)-(RED_LOW/20))*(255.)/(RED_HIGH/10-RED_LOW/20);
 	 BLUE1=((BLUE/10)-(BLUE_LOW/20))*(255.)/(BLUE_HIGH/10-BLUE_LOW/20);
@@ -511,6 +522,9 @@ void LIGHT_RGB_LED(void){
 	lcd_command(0xC0);
 	LCD_STRING("the device");
 	_delay_ms(5000);
+	PORTD &=~(1<<3);
+	PORTB &=~(1<<0);
+	PORTC &=~(1<<4);
 	LCD_Clear();
 	LCD_print();
 }
