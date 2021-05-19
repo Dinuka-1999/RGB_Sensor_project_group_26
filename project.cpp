@@ -374,22 +374,25 @@ void SENSING_MODE(void){
 	 LCD_Clear();
 	 LCD_print();
  }
- void BLUE_light(void){
-	 DDRB|=(1<<3);
+ void LIGHT_RGB(void){
+	 DDRB|=(1<<3)|(1<<2)|(1<<1);
 	 TCCR2A=(1<<COM2A1)|(1<<WGM20)|(1<<WGM21); //set the OC2A port for fast PMW non inverting method
+	 TCCR1A=(1<<COM1B1)|(1<<WGM10)|(1<<COM1A1);
+	 TIMSK1 =(1<<TOIE1);
 	 TIMSK2=(1<<TOIE2);								
-	 OCR2A=BLUE_DUTY_CYCLE; // set the duty cycle 
+	 //OCR2A=BLUE_DUTY_CYCLE; // set the duty cycle 
+	 //OCR1B=GREEN_DUTY_CYCLE;
+	 //OCR1A=RED_DUTY_CYCLE;
 	 sei();
 	 TCCR2B=(1<<CS22)|(1<<CS21)|(1<<CS20);
+	 TCCR1B=(1<<CS10)|(1<<CS12)|(1<<WGM12);
  }
- void GREEN_RED_light(void){
-	 DDRB|=(1<<2)|(1<<1); //set the OC1A and OC1B for fast pwm mode
-	 TCCR1A=(1<<COM1B1)|(1<<WGM12)|(1<<WGM10)|(1<<COM1A1);
-	 TIMSK1 =(1<<TOIE1);
-	 OCR1A=RED_DUTY_CYCLE;
-	 OCR1B=GREEN_DUTY_CYCLE;
-	 sei();
-	 TCCR1B=(1<<CS10)|(1<<CS12);
+ void pwmStop(){
+	 TCCR2A &=~(1<<COM2A1)& ~(1<<WGM20)& ~(1<<WGM21);
+	 TCCR1A &=~(1<<COM1B1)& ~(1<<WGM10) & ~(1<<COM1A1)& ~(1<<WGM12);
+	 TCCR2B=0;
+	 TCCR1A=0;
+	 cli();
  }
 void LIGHT_RGB_LED(void){
 	LCD_Clear();
@@ -407,6 +410,8 @@ void LIGHT_RGB_LED(void){
 		if (key1){
 			val1+=(key1-48)*pow(10,2-power1);
 			power1++;
+			lcd_command(0xC0|power1);
+			LCD_character(key1);
 			_delay_ms(60);
 		}
 		if (power1==3){
@@ -417,7 +422,7 @@ void LIGHT_RGB_LED(void){
 				lcd_command(0x80);
 				LCD_STRING("Invalid Value");
 				lcd_command(0xC0);
-				LCD_STRING("Enter a new val");
+				LCD_STRING("Enter new one");
 				_delay_ms(1000);
 				LCD_Clear();
 				lcd_command(0x80);
@@ -447,6 +452,8 @@ void LIGHT_RGB_LED(void){
 		if (key1){
 			val1+=(key1-48)*pow(10,2-power1);
 			power1++;
+			lcd_command(0xC0|power1);
+			LCD_character(key1);
 			_delay_ms(60);
 		}
 		if (power1==3){
@@ -455,7 +462,7 @@ void LIGHT_RGB_LED(void){
 				lcd_command(0x80);
 				LCD_STRING("Invalid Value");
 				lcd_command(0xC0);
-				LCD_STRING("Enter a new val");
+				LCD_STRING("Enter new val");
 				_delay_ms(1000);
 				LCD_Clear();
 				lcd_command(0x80);
@@ -484,6 +491,8 @@ void LIGHT_RGB_LED(void){
 		if (key1){
 			val1+=(key1-48)*pow(10,2-power1);
 			power1++;
+			lcd_command(0xC0|power1);
+			LCD_character(key1);
 			_delay_ms(60);
 		}
 		if (power1==3){
@@ -507,11 +516,12 @@ void LIGHT_RGB_LED(void){
 		}
 	}
 	//write pwm values
-	BLUE_light();
-	GREEN_RED_light();
+	LIGHT_RGB();
 	RED_DUTY_CYCLE=RED1;
 	GREEN_DUTY_CYCLE=GREEN1;
 	BLUE_DUTY_CYCLE=BLUE1;
+	_delay_ms(2000);
+	pwmStop();
 	LCD_Clear();
 	lcd_command(0x80);
 	LCD_STRING("Done");
