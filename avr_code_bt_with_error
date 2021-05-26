@@ -1,0 +1,233 @@
+/*
+ * project_26_05_2021.cpp
+ *
+ * Created: 5/26/2021 4:36:27 PM
+ * Author : vakeesan
+ */ 
+
+#include <avr/io.h>
+#define F_CPU 16000000UL
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+#define times 5
+#define red_sen 0
+#define green_sen 2
+#define blue_sen 3
+#define RS 0 //RS pin of lcd
+#define EN 1 //enable pin of lcd
+unsigned char iscalibrated =0;
+unsigned int rgbArr[1];
+unsigned int caliArr[2];
+unsigned int adc_val;
+unsigned char keypad[4][3]={{'0','1','2'},
+							{'3','4','5'},
+							{'6','7','8'},
+							{'9','*','#'}};
+// all the functions
+void calibration(void);
+unsigned int sensing(void);
+void output (void);
+void ADC_read(void);
+void LCD_init();
+void LCD_command(unsigned char cmd);
+void LCD_data(unsigned char data);
+void LCD_goto(unsigned char x, unsigned char y);
+void LCD_print(char *str);
+
+
+
+
+
+// calibration function
+
+void calibration(void)
+{
+	iscalibrated=1;
+	//lcd code for showing white surface
+	
+	LCD_print("show white to sensor!");
+	
+	caliArr[0]= sensing();
+	//lcd code for showing black surface
+	caliArr[1]= sensing();
+	
+	
+}
+// sensing function
+unsigned int sensing(void)
+{
+	unsigned int red_val,green_val,blue_val;
+	unsigned char i;
+	unsigned int total;
+	
+	//turn on red led 
+	PORTD |=(1<<red_sen);
+	
+	for ( i=0; i<times; i++)
+	{
+		//get the value from adc
+		ADC_read();
+		//get the total
+		total+=adc_val;
+	}
+	
+	_delay_us(100);
+	//turn off the red led
+	PORTD &=~(1<<red_sen);
+	//find the average
+	red_val=round(total/times);
+	total=0;
+	//turn on green led
+	PORTB |=(1<<green_sen);
+	
+	for ( i=0; i<times; i++)
+	{
+		//get the value from adc
+		ADC_read();
+		//get the total
+		total+=adc_val;
+	}
+	_delay_us(100);
+	//turn off the green led
+	PORTB &= ~(1<<green_sen);
+	//find the average
+	green_val=round(total/times);
+	total=0;
+	//turn on blue led
+	PORTB |= (1<<blue_sen);
+	for ( i=0; i<times; i++)
+	{
+		//get the value from adc
+		ADC_read();
+		//get the total
+		total+=adc_val;
+	}
+	_delay_us(100);
+	//turn off the blue led
+	PORTB &=~(1<<blue_sen);
+	//find the average
+	blue_val=round(total/times);
+	unsigned int arr[]={red_val,green_val, blue_val};
+	return arr;
+}
+
+//output the colour by manual
+// it will only accept the numerical value then translate to dac 
+// not accept non numerical so u have to change the type before calling it
+void output (void)
+{
+	//turn on all the leds with correct values of array
+	_delay_us(500);
+}
+// adc interrupt function
+ISR(ADC_vect)
+{
+	unsigned char lowBit=ADCL; // assign the low bits(first 8 bits) to the lowbit 
+	unsigned char highBit=ADCH; // assign the high bits(last 2 bits) to the high bit
+	adc_val=(highBit<<8)|lowBit; // find the full 10 bit value
+	ADCSRA =(1<<ADSC); // strat the adc conversion
+
+}
+void ADC_read(void)
+{
+	sei(); //enable the interrupt
+	ADCSRA=0x8F; //enable the interrupt and clock speed/128 timer
+	ADMUX = 0xC0; //2.56 v for ref and ADC0 for single ended input and right adjust input
+	ADCSRA|=(1<<ADSC); //start the conversion
+	
+}
+
+void LCD_init()
+{
+	PORTB &= ~(1<<EN);
+	_delay_us(2000);  //wait for stable power
+	LCD_command(0x33);  // 4 bit mode
+	_delay_us(100);
+	LCD_command(0x32);  // 4 bit mode
+	_delay_us(100);
+	LCD_command(0x28);  //4 bit mode
+	_delay_us(100);
+	LCD_command(0x0E);  // display on cursor on
+	_delay_us(100);
+	LCD_command(0x01);  // clear lcd
+	_delay_us(100);
+	LCD_command(0x06);   //shift cursor right
+	_delay_us(100);
+	
+}
+void LCD_command(unsigned char cmd)
+{
+	PORTB &= ~(1<<RS); //RS =0 for command
+	PORTB |=(1<<EN);   // EN =1 for enable
+	_delay_us(1);      //wait to make EN wider
+	PORTB &= ~(1<<EN); // EN =0 
+	_delay_us(20);
+	PORTB = (PORTB & 0x0F)|(cmd<<4);
+	PORTB |=(1<<EN);   // EN =1
+	_delay_us(1);
+	PORTB &= ~(1<<EN);  //EN =0
+}
+void LCD_data(unsigned char data)
+{
+	PORTB |= (1<<RS);  // RS=1 for data
+	PORTB |= (1<<EN);  // EN=1
+	_delay_us(1);
+	PORTB &=~(1<<EN);   //EN=0
+	PORTB =(PORTB & 0x0F)|(data<<4);  
+	PORTB |= (1<<EN);  // EN =1
+	_delay_us(1);
+	PORTB &= ~ (1<<EN);  // EN=0
+	
+}
+void LCD_goto(unsigned char x, unsigned char y)
+{
+	unsigned char firstChar[]={0x80,0xc0};
+	LCD_command(firstChar[y-1]+x-1);
+	_delay_us(100);
+}
+void LCD_print(char *str)
+{
+	unsigned char i =0;
+	while(str[i]!=0)
+	{
+		LCD_data(str[i]);
+		i++;
+	}
+}
+int main(void)
+{
+    //define the initial functions
+	DDRD=0b00000001;   //keypad pins are input and red led on the sensor is output 
+	DDRB=0b11111111;   //lcd and leds for sensor are defined as output
+	DDRC=0b11111110;   // ldr is input and other pins are output
+    LCD_init();   // initialize the lcd display
+	while (1) 
+    {
+		// input from keypad
+		unsigned char key=1;
+		/*if (key=='1')
+		{
+			calibration();
+		}
+		*/
+		/*if (key=='2')
+		{
+			if (iscalibrated==0) calibration();
+			//rgbArr[0]=sensing();
+			//correct algorithm for chnaging adc value to numrical value
+			output();
+		}
+		*/
+		if (key=='3')
+		{
+			//get the values and change the rgbArr list
+			
+			output();
+		}
+		if (key=='*')
+		{
+			break;
+		}
+    }
+}
