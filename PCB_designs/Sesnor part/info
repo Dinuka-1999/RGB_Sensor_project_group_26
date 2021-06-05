@@ -1,0 +1,138 @@
+{
+  "uuid": "95b2df4d7e438f01643bf82e59727b14",
+  "path": "Offline/Sesnor part",
+  "name": "Sesnor part",
+  "content": "",
+  "created_at": "2021-06-02 19:39:26",
+  "updated_at": "2021-06-03 20:18:00",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "ca4c178a0a17a5eaf832627298b757ad",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "f2adfac8fada45f088aa5a9d3074ce3e": 1,
+        "9bd55fad47ad4f3aaa35851c70f2642b": 4,
+        "94407123373e4a1690c7eb993a884255": 1,
+        "17eb339750ed2e3756214c176201643d": 1,
+        "a29fc8d97da54dff9ce102784ee60e4e": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "RESISTOR",
+          4,
+          "AXIAL-0.4",
+          "R2,R3,R4,R5",
+          {
+            "BOM_EasyEDA": "E57439",
+            "BOM_Supplier Part": "E57439",
+            "BOM_Supplier": "EasyEDA",
+            "BOM_Manufacturer": "UniOhm",
+            "BOM_Manufacturer Part": "MFR0W4F2200A50",
+            "puuid": "e7870df76a684accba936496553f47ac",
+            "uuid": "9bd55fad47ad4f3aaa35851c70f2642b"
+          }
+        ],
+        [
+          "Header-Male-2.54_1x6",
+          1,
+          "HDR-TH_6P-P2.54-V",
+          "H1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "BOOMELE",
+            "BOM_Manufacturer Part": "Header-Male-2.54_1x6",
+            "BOM_Supplier Part": "C37208",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "fd9fc9865419407ab6a588b47dec0227",
+            "uuid": "17eb339750ed2e3756214c176201643d"
+          }
+        ],
+        [
+          "NPN",
+          1,
+          "TO-92-3_L4.9-W3.7-P1.27-L",
+          "Q1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C713613",
+            "BOM_Manufacturer": "LGE",
+            "BOM_Manufacturer Part": "BC547B",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "788941c795c04ec699d71ec014f661d4",
+            "uuid": "94407123373e4a1690c7eb993a884255"
+          }
+        ],
+        [
+          "LED-RGB-CC-THRUCLEAR",
+          1,
+          "LED-RGB-THRU",
+          "D1",
+          {
+            "BOM_Manufacturer Part": "",
+            "puuid": "ca27a562e39e4ef5b95da64f13c728a9",
+            "uuid": "a29fc8d97da54dff9ce102784ee60e4e"
+          }
+        ],
+        [
+          "LDR03",
+          1,
+          "RESISTOR_LDR_10X8.5_RM7.6",
+          "R1",
+          {
+            "BOM_Manufacturer Part": "",
+            "puuid": "3ecd891225514ab4b8692a3fe2446bd1",
+            "uuid": "f2adfac8fada45f088aa5a9d3074ce3e"
+          }
+        ]
+      ],
+      "updateTime": 1622649595,
+      "createTime": 1622642973,
+      "histories": [],
+      "created_at": "2021-06-02 19:39:33",
+      "updated_at": "2021-06-02 21:29:55"
+    },
+    {
+      "uuid": "329d3e25b8eec90704b23b1b25307fb7",
+      "puuid": "95b2df4d7e438f01643bf82e59727b14",
+      "title": "PCB_Sesnor part",
+      "filename": "PCB_Sesnor part.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "e7870df76a684accba936496553f47ac": 4,
+        "fd9fc9865419407ab6a588b47dec0227": 1,
+        "788941c795c04ec699d71ec014f661d4": 1,
+        "3ecd891225514ab4b8692a3fe2446bd1": 1,
+        "ca27a562e39e4ef5b95da64f13c728a9": 1
+      },
+      "BOM": [],
+      "updateTime": 1622731680,
+      "createTime": 1622648502,
+      "histories": [],
+      "created_at": "2021-06-02 21:11:42",
+      "updated_at": "2021-06-03 20:18:00"
+    }
+  ],
+  "sort": [
+    "ca4c178a0a17a5eaf832627298b757ad",
+    "c5d54ebc06c4f6b812080a77aac22e82"
+  ],
+  "title": "Sesnor part",
+  "foldername": "Sesnor part",
+  "schfilename": "Sesnor part.json",
+  "schfilemtime": 1622728540046
+}

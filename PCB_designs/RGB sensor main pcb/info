@@ -1,0 +1,398 @@
+{
+  "uuid": "d411ece505b85d54c3c188a9b5b2a7f4",
+  "path": "Offline/RGB sensor pcb",
+  "name": "RGB sensor pcb",
+  "content": "",
+  "created_at": "2021-05-29 14:04:39",
+  "updated_at": "2021-06-03 20:17:44",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "e05c09f1da3029c35cb2ab1656dff294",
+      "title": "schmatic",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "31af3266708b4a22833a8d96e8162e1a": 1,
+        "7de501fc75ac493a965b2b9f2b1bbe3f": 1,
+        "5be54c321bd14d348c8381ecaf5a69ca": 2,
+        "6c9002246cb049c28c50163d45c8214b": 2,
+        "5473f07d6caf44cb9c9bf3a156642f5f": 1,
+        "9bd55fad47ad4f3aaa35851c70f2642b": 2,
+        "d09c815c60254a53a63fdc7cb2e653f0": 1,
+        "cd526f21f66a42219b2dd654eaa41250": 1,
+        "f49767e4416d40f0884418e0d0b93281": 2,
+        "fcb916352250470ea0045f08ed328374": 1,
+        "27abc73ba5033d1126fd4d36740da2a2": 1,
+        "fcaba4851eda4ca19d4326a668633a30": 1,
+        "a11fdfe9a0cc49e1a1cfaebefbb79667": 1,
+        "21f8f80a3f7c3c2b00b33f71a31ff6ef": 2,
+        "c996990367134df4854174670f257897": 2,
+        "58557ab5dac544259249b4981dd6020c": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "100nF",
+          2,
+          "CAP-TH_BD5.0-P2.00-D0.8-FD",
+          "C4,C1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ValuePro",
+            "BOM_Manufacturer Part": "0.1UF 50V",
+            "BOM_Supplier Part": "C28061",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "3744bcbe1f464b01ae180f32d7d4b0c4",
+            "uuid": "5be54c321bd14d348c8381ecaf5a69ca"
+          }
+        ],
+        [
+          "22pF",
+          2,
+          "CAP-TH_L3.5-W3.0-P2.54-D0.8",
+          "C2,C3",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ReliaPro",
+            "BOM_Manufacturer Part": "22pf/50V 10%",
+            "BOM_Supplier Part": "C9316",
+            "puuid": "52cd2c51d74145d39b9c4fa97425171a",
+            "uuid": "6c9002246cb049c28c50163d45c8214b"
+          }
+        ],
+        [
+          "RST_BTT",
+          1,
+          "KEY-TH_4P-L6.0-W6.0-P4.50",
+          "KEY1",
+          {
+            "BOM_Supplier Part": "C59980",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ReliaPro",
+            "BOM_Manufacturer Part": "button6*6*8.5",
+            "puuid": "9096c4e6bc254754b0b895e85df2faca",
+            "uuid": "7de501fc75ac493a965b2b9f2b1bbe3f"
+          }
+        ],
+        [
+          "RESISTOR",
+          2,
+          "AXIAL-0.4",
+          "R2,R1",
+          {
+            "BOM_EasyEDA": "E57439",
+            "BOM_Supplier Part": "E57439",
+            "BOM_Supplier": "EasyEDA",
+            "BOM_Manufacturer": "UniOhm",
+            "BOM_Manufacturer Part": "MFR0W4F2200A50",
+            "puuid": "e7870df76a684accba936496553f47ac",
+            "uuid": "9bd55fad47ad4f3aaa35851c70f2642b"
+          }
+        ],
+        [
+          "keypadROW",
+          1,
+          "HDR-TH_3P-P2.54-V",
+          "H4",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "BOOMELE",
+            "BOM_Manufacturer Part": "Header2.54mm 1*3P",
+            "BOM_Supplier Part": "C49257",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "7e70b923819e4f3bb9fdeaf4abdca9d3",
+            "uuid": "21f8f80a3f7c3c2b00b33f71a31ff6ef"
+          }
+        ],
+        [
+          "column",
+          1,
+          "HDR-TH_3P-P2.54-V",
+          "H2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "BOOMELE",
+            "BOM_Manufacturer Part": "Header2.54mm 1*3P",
+            "BOM_Supplier Part": "C49257",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "7e70b923819e4f3bb9fdeaf4abdca9d3",
+            "uuid": "21f8f80a3f7c3c2b00b33f71a31ff6ef"
+          }
+        ],
+        [
+          "LCD_DISPLAY",
+          1,
+          "HDR-TH_10P-P2.54-V",
+          "H1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer Part": "Headers  Pins2.54mm1*10P",
+            "BOM_Supplier Part": "C57369",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "ef10e215415a49a49cdabc8e1fed0af1",
+            "uuid": "27abc73ba5033d1126fd4d36740da2a2"
+          }
+        ],
+        [
+          "ATMEGA _328P-PU",
+          1,
+          "DIP-28_L34.6-W7.3-P2.54-LS10.2-BL",
+          "U1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "MICROCHIP",
+            "BOM_Manufacturer Part": "ATMEGA328P-PU",
+            "BOM_Supplier Part": "C33901",
+            "puuid": "2f1d96128ab94db491eae99d61bfb39c",
+            "uuid": "31af3266708b4a22833a8d96e8162e1a"
+          }
+        ],
+        [
+          "16MHz",
+          1,
+          "16MHZ_OSC [PCB]",
+          "XTAL1",
+          {
+            "BOM_Supplier": "SHIVRAM",
+            "BOM_Manufacturer": "SHIVRAM",
+            "BOM_Manufacturer Part": "0SC-16MHz",
+            "BOM_Supplier Part": "0SC-16MHz",
+            "puuid": "629100255eca4ae2b76302a99366eae7",
+            "uuid": "5473f07d6caf44cb9c9bf3a156642f5f"
+          }
+        ],
+        [
+          "h6",
+          1,
+          "HDR-TH_4P-P2.54-V",
+          "H6",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "Ckmtw",
+            "BOM_Manufacturer Part": "210S-1*4P L=11.6MMGold-plated black",
+            "BOM_Supplier Part": "C124378",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "31a453d5adfc45cea944a6450adf2918",
+            "uuid": "58557ab5dac544259249b4981dd6020c"
+          }
+        ],
+        [
+          "LED",
+          1,
+          "5MM LED",
+          "U4",
+          {
+            "BOM_Manufacturer Part": "5mm LED",
+            "puuid": "e39eafbaf5944a6fad545c7e1b5b29a4",
+            "uuid": "a11fdfe9a0cc49e1a1cfaebefbb79667"
+          }
+        ],
+        [
+          "h7",
+          1,
+          "HDR-TH_2P-P2.54-V",
+          "H7",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "TE Connectivity",
+            "BOM_Manufacturer Part": "826629-2",
+            "BOM_Supplier Part": "C86471",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "7ae61b24ec5d431087f34ea7cfebbd9e",
+            "uuid": "c996990367134df4854174670f257897"
+          }
+        ],
+        [
+          "rgb/c1",
+          1,
+          "HDR-TH_2P-P2.54-V",
+          "H5",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "TE Connectivity",
+            "BOM_Manufacturer Part": "826629-2",
+            "BOM_Supplier Part": "C86471",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "7ae61b24ec5d431087f34ea7cfebbd9e",
+            "uuid": "c996990367134df4854174670f257897"
+          }
+        ],
+        [
+          "POWER",
+          1,
+          "CONN-TH_XHB-2A",
+          "CN1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "BOOMELE",
+            "BOM_Manufacturer Part": "XHB-2A Connector",
+            "BOM_Supplier Part": "C57981",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "45b80daf67ad4ef6abe93cb9e2bbf325",
+            "uuid": "cd526f21f66a42219b2dd654eaa41250"
+          }
+        ],
+        [
+          "Regulator",
+          1,
+          "TO-220-3_L10.0-W4.5-P2.54-L",
+          "U2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C305416",
+            "BOM_Manufacturer": "Foshan Blue Rocket Elec",
+            "BOM_Manufacturer Part": "7805",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "948e610cffd14df79f04c73832b1409b",
+            "uuid": "d09c815c60254a53a63fdc7cb2e653f0"
+          }
+        ],
+        [
+          "330nF",
+          1,
+          "CAP-TH_BD5.0-P2.00-D0.8-FD",
+          "C5",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ValuePro",
+            "BOM_Manufacturer Part": "0.33uF 50V 5*11",
+            "BOM_Supplier Part": "C45097",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "3744bcbe1f464b01ae180f32d7d4b0c4",
+            "uuid": "f49767e4416d40f0884418e0d0b93281"
+          }
+        ],
+        [
+          "100nF",
+          1,
+          "CAP-TH_BD5.0-P2.00-D0.8-FD",
+          "C6",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ValuePro",
+            "BOM_Manufacturer Part": "0.33uF 50V 5*11",
+            "BOM_Supplier Part": "C45097",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "3744bcbe1f464b01ae180f32d7d4b0c4",
+            "uuid": "f49767e4416d40f0884418e0d0b93281"
+          }
+        ],
+        [
+          "Pot_meter",
+          1,
+          "RES-ADJ-TH_3386P",
+          "RP1",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer Part": "",
+            "puuid": "ce6e0cc9b0684cd986edbf86d7075dfd",
+            "uuid": "fcaba4851eda4ca19d4326a668633a30"
+          }
+        ],
+        [
+          "USBASAP",
+          1,
+          "JST 2.54MM MALE 6 PIN CONNECTOR_N",
+          "U3",
+          {
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "puuid": "babac8ccfd6d44a1b7a5050bb57dbff3",
+            "uuid": "fcb916352250470ea0045f08ed328374"
+          }
+        ]
+      ],
+      "updateTime": 1622624151,
+      "createTime": 1622277536,
+      "histories": [],
+      "created_at": "2021-05-29 14:08:56",
+      "updated_at": "2021-06-02 14:25:51"
+    },
+    {
+      "uuid": "c4e030ffcf7e4ae722eebd3741a596e3",
+      "puuid": "d411ece505b85d54c3c188a9b5b2a7f4",
+      "title": "PCB_RGB sensor pcb",
+      "filename": "PCB_RGB sensor pcb.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "3744bcbe1f464b01ae180f32d7d4b0c4": 4,
+        "52cd2c51d74145d39b9c4fa97425171a": 2,
+        "9096c4e6bc254754b0b895e85df2faca": 1,
+        "e7870df76a684accba936496553f47ac": 2,
+        "7e70b923819e4f3bb9fdeaf4abdca9d3": 2,
+        "ef10e215415a49a49cdabc8e1fed0af1": 1,
+        "2f1d96128ab94db491eae99d61bfb39c": 1,
+        "629100255eca4ae2b76302a99366eae7": 1,
+        "31a453d5adfc45cea944a6450adf2918": 1,
+        "e39eafbaf5944a6fad545c7e1b5b29a4": 1,
+        "7ae61b24ec5d431087f34ea7cfebbd9e": 2,
+        "45b80daf67ad4ef6abe93cb9e2bbf325": 1,
+        "948e610cffd14df79f04c73832b1409b": 1,
+        "ce6e0cc9b0684cd986edbf86d7075dfd": 1,
+        "babac8ccfd6d44a1b7a5050bb57dbff3": 1
+      },
+      "BOM": [],
+      "updateTime": 1622730513,
+      "createTime": 1622619296,
+      "histories": [],
+      "created_at": "2021-06-02 13:04:56",
+      "updated_at": "2021-06-03 19:58:33"
+    },
+    {
+      "uuid": "20edfbcc8551a1430e03591b74043144",
+      "puuid": "d411ece505b85d54c3c188a9b5b2a7f4",
+      "title": "PCB_RGB sensor pcb_2",
+      "filename": "PCB_RGB sensor pcb_2.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "3744bcbe1f464b01ae180f32d7d4b0c4": 4,
+        "52cd2c51d74145d39b9c4fa97425171a": 2,
+        "9096c4e6bc254754b0b895e85df2faca": 1,
+        "e7870df76a684accba936496553f47ac": 2,
+        "7e70b923819e4f3bb9fdeaf4abdca9d3": 2,
+        "ef10e215415a49a49cdabc8e1fed0af1": 1,
+        "2f1d96128ab94db491eae99d61bfb39c": 1,
+        "629100255eca4ae2b76302a99366eae7": 1,
+        "31a453d5adfc45cea944a6450adf2918": 1,
+        "e39eafbaf5944a6fad545c7e1b5b29a4": 1,
+        "7ae61b24ec5d431087f34ea7cfebbd9e": 2,
+        "45b80daf67ad4ef6abe93cb9e2bbf325": 1,
+        "948e610cffd14df79f04c73832b1409b": 1,
+        "ce6e0cc9b0684cd986edbf86d7075dfd": 1,
+        "babac8ccfd6d44a1b7a5050bb57dbff3": 1
+      },
+      "BOM": [],
+      "updateTime": 1622731664,
+      "createTime": 1622623757,
+      "histories": [],
+      "created_at": "2021-06-02 14:19:17",
+      "updated_at": "2021-06-03 20:17:44"
+    }
+  ],
+  "sort": [
+    "e05c09f1da3029c35cb2ab1656dff294",
+    "7d83254436f64fed4646c0abbab2ae5d"
+  ],
+  "title": "RGB sensor pcb",
+  "foldername": "RGB sensor pcb",
+  "schfilename": "RGB sensor pcb.json",
+  "schfilemtime": 1622624151480
+}

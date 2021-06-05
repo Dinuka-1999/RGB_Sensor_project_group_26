@@ -1,0 +1,129 @@
+{
+  "uuid": "ae41fac05ed07d0c9adfffcf3a25b9da",
+  "path": "Offline/RGB array",
+  "name": "RGB array",
+  "content": "",
+  "created_at": "2021-06-02 10:38:34",
+  "updated_at": "2021-06-03 20:17:54",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "8b8d37942dc2c5a0490e6b7339c7b81c",
+      "title": "Sheet_2",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "58557ab5dac544259249b4981dd6020c": 1,
+        "a29fc8d97da54dff9ce102784ee60e4e": 3,
+        "9bd55fad47ad4f3aaa35851c70f2642b": 3
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "RESISTOR",
+          3,
+          "AXIAL-0.4",
+          "R1,R3,R2",
+          {
+            "BOM_EasyEDA": "E57439",
+            "BOM_Supplier Part": "E57439",
+            "BOM_Supplier": "EasyEDA",
+            "BOM_Manufacturer": "UniOhm",
+            "BOM_Manufacturer Part": "MFR0W4F2200A50",
+            "puuid": "e7870df76a684accba936496553f47ac",
+            "uuid": "9bd55fad47ad4f3aaa35851c70f2642b"
+          }
+        ],
+        [
+          "Header-Male-2.54_1x4",
+          1,
+          "HDR-TH_4P-P2.54-V",
+          "H1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "Ckmtw",
+            "BOM_Manufacturer Part": "210S-1*4P L=11.6MMGold-plated black",
+            "BOM_Supplier Part": "C124378",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "31a453d5adfc45cea944a6450adf2918",
+            "uuid": "58557ab5dac544259249b4981dd6020c"
+          }
+        ],
+        [
+          "LED-RGB-CC-THRUCLEAR",
+          3,
+          "LED-RGB-THRU",
+          "D1,D2,D3",
+          {
+            "BOM_Manufacturer Part": "",
+            "puuid": "ca27a562e39e4ef5b95da64f13c728a9",
+            "uuid": "a29fc8d97da54dff9ce102784ee60e4e"
+          }
+        ]
+      ],
+      "updateTime": 1622616199,
+      "createTime": 1622611428,
+      "histories": [],
+      "created_at": "2021-06-02 10:53:48",
+      "updated_at": "2021-06-02 12:13:19"
+    },
+    {
+      "uuid": "2d5c9381de1ef44d9716e041ba86c77a",
+      "puuid": "ae41fac05ed07d0c9adfffcf3a25b9da",
+      "title": "PCB_RGB array_2",
+      "filename": "PCB_RGB array_2.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "31a453d5adfc45cea944a6450adf2918": 1,
+        "ca27a562e39e4ef5b95da64f13c728a9": 3,
+        "e7870df76a684accba936496553f47ac": 3
+      },
+      "BOM": [],
+      "updateTime": 1622616930,
+      "createTime": 1622614856,
+      "histories": [],
+      "created_at": "2021-06-02 11:50:56",
+      "updated_at": "2021-06-02 12:25:30"
+    },
+    {
+      "uuid": "11478f9536a6954eb88eb8c573a4a184",
+      "puuid": "ae41fac05ed07d0c9adfffcf3a25b9da",
+      "title": "PCB_RGB array",
+      "filename": "PCB_RGB array.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "e7870df76a684accba936496553f47ac": 3,
+        "31a453d5adfc45cea944a6450adf2918": 1,
+        "ca27a562e39e4ef5b95da64f13c728a9": 3
+      },
+      "BOM": [],
+      "updateTime": 1622731674,
+      "createTime": 1622622472,
+      "histories": [],
+      "created_at": "2021-06-02 13:57:52",
+      "updated_at": "2021-06-03 20:17:54"
+    }
+  ],
+  "sort": [
+    "3efcbc15845bdb7f18dca1e66714b748",
+    "8b8d37942dc2c5a0490e6b7339c7b81c"
+  ],
+  "title": "RGB array",
+  "foldername": "RGB array",
+  "schfilename": "RGB array.json",
+  "schfilemtime": 1622616199987
+}
