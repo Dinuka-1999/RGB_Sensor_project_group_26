@@ -191,8 +191,8 @@ void CALIBRATION(void){
 	ADC_Init();
 	LCD_Clear();
  //display some useful messages
-	LCD_STRING("Calibrating",0x80);
-	LCD_STRING("Red Surface",0xC0);
+	LCD_STRING("Calibrating",0x82);
+	LCD_STRING("Red Surface",0xC2);
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_STRING("Press # to start",0x80);
@@ -200,7 +200,7 @@ void CALIBRATION(void){
 	char key2=keyfind();
 	if (key2=='#'){
 		LCD_Clear();
-		LCD_STRING("Calibrating",0x80);
+		LCD_STRING("Calibrating",0x82);
 		PORTD |=(1<<3); //light the red color of the RGB LED
 		PORTB &=~(1<<0);
 		PORTC &=~(1<<4);
@@ -233,15 +233,15 @@ void CALIBRATION(void){
 	PORTC &=~(1<<4);
 	_delay_ms(1000);
 	LCD_Clear();
-	LCD_STRING("Calibrating",0x80);
-	LCD_STRING("GREEN surface",0xC0);
+	LCD_STRING("Calibrating",0x82);
+	LCD_STRING("GREEN surface",0xC1);
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_STRING("Press # to start",0x80); //same thing for the green surface as the red surface
 		char key3=keyfind();
 		if (key3=='#'){
 			LCD_Clear();
-			LCD_STRING("Calibrating",0x80);
+			LCD_STRING("Calibrating",0x82);
 			PORTD &=~(1<<3);
 			PORTB |=(1<<0);
 			PORTC &=~(1<<4);
@@ -274,15 +274,15 @@ void CALIBRATION(void){
 	PORTC &=~(1<<4);
 	_delay_ms(1000);
 	LCD_Clear();
-	LCD_STRING("Calibrating",0x80);
-	LCD_STRING("BLUE surface",0xC0);
+	LCD_STRING("Calibrating",0x82);
+	LCD_STRING("BLUE surface",0xC1);
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_STRING("Press # to start",0x80); // same procedure for the Blue Surface
 		char key4=keyfind();
 		if (key4=='#'){
 			LCD_Clear();
-			LCD_STRING("Calibrating",0x80);
+			LCD_STRING("Calibrating",0x82);
 			PORTD &=~(1<<3);
 			PORTB &=~(1<<0);
 			PORTC |=(1<<4);
@@ -309,7 +309,7 @@ void CALIBRATION(void){
 			}
 		}
 	LCD_Clear();
-	LCD_STRING("Done!",0x80);
+	LCD_STRING("Done!",0x85);
 	PORTD &=~(1<<3);
 	PORTB &=~(1<<0);
 	PORTC &=~(1<<4);
@@ -345,6 +345,7 @@ void SENSING_MODE(void){
 	PORTD |=(1<<3);
 	PORTB &=~(1<<0);
 	PORTC &=~(1<<4);
+	_delay_ms(100);
 	for (int r=1;r<=10;r++){//sense the red color intensity of the given surface
 		RED+=ADC_Read('5');
 		_delay_ms(100);
@@ -352,6 +353,7 @@ void SENSING_MODE(void){
 	PORTD &=~(1<<3);
 	PORTB |=(1<<0);
 	PORTC &=~(1<<4);
+	_delay_ms(100);
 	for (int r=1;r<=10;r++){ // sense the green color intensity of the surface
 		GREEN+=ADC_Read('5');
 		_delay_ms(100);
@@ -359,6 +361,7 @@ void SENSING_MODE(void){
 	PORTD &=~(1<<3);
 	PORTB &=~(1<<0);
     PORTC |=(1<<4);
+	_delay_ms(100);
 	for (int r=1;r<=10;r++){ //sense the green color intensity of the Blue surface
 		 BLUE+=ADC_Read('5');
 		 _delay_ms(100);
@@ -460,7 +463,7 @@ void LIGHT_RGB_LED(void){
 			if (pos!=0){
 				lcd_command(0xC0|(pos-1));
 				LCD_character(' ');
-				_delay_ms(60);
+				_delay_ms(40);
 				val1=val1/10;
 				pos--;
 			}
@@ -502,7 +505,7 @@ void LIGHT_RGB_LED(void){
 			if (pos!=0){
 				lcd_command(0xC0|(pos-1));
 				LCD_character(' ');
-				_delay_ms(60);
+				_delay_ms(40);
 				val1=val1/10;
 				pos--;
 			}
@@ -543,8 +546,8 @@ void LIGHT_RGB_LED(void){
 		else if (key1=='*'){
 			if (pos!=0){
 				lcd_command(0xC0|(pos-1));
-				_delay_ms(60);
 				LCD_character(' ');
+				_delay_ms(40);
 				val1=val1/10;
 				pos--;
 			}
@@ -579,10 +582,19 @@ int main(void)
 		char key=keyfind();
 		if (key){
 			if (key=='1'){
+				eeprom_update_byte((uint8_t*)0x007,1);
 				CALIBRATION();
 			}
 			else if(key=='2'){
-				SENSING_MODE();
+				uint8_t num=eeprom_read_byte((uint8_t*)0x007);
+				if (num!=1){
+					LCD_Clear();
+					LCD_STRING("Calibrate first",0x80);
+					LCD_STRING("Press 1",0xC4);
+				}
+				else{
+					SENSING_MODE();
+				}
 			}
 			else if(key=='3'){
 				LIGHT_RGB_LED();
@@ -608,7 +620,7 @@ void LCD_print(void){
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_STRING("1:Calibration",0x80);
-	LCD_STRING("Mode",0xC2);
+	LCD_STRING("Mode",0xC6);
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_STRING("2:Sensing Mode",0x80);
