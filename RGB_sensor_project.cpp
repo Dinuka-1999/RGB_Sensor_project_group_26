@@ -286,7 +286,7 @@ void CALIBRATION(void){
 			PORTD &=~(1<<3);
 			PORTB &=~(1<<0);
 			PORTC |=(1<<4);
-			_delay_ms(2000);
+			_delay_ms(100);
 			for (int r=1;r<=10;r++){
 				BLUE_HIGH+=ADC_Read('5');
 				_delay_ms(10);
@@ -294,7 +294,7 @@ void CALIBRATION(void){
 			PORTD |=(1<<3);
 			PORTB &=~(1<<0);
 			PORTC &=~(1<<4);
-			_delay_ms(2000);
+			_delay_ms(100);
 			for (int r=1;r<=10;r++){
 				RED_LOW+=ADC_Read('5');
 				_delay_ms(10);
@@ -302,7 +302,7 @@ void CALIBRATION(void){
 			PORTD &=~(1<<3);
 			PORTB |=(1<<0);
 			PORTC &=~(1<<4);
-			_delay_ms(2000);
+			_delay_ms(100);
 			for (int r=1;r<=10;r++){
 				GREEN_LOW+=ADC_Read('5');
 				_delay_ms(10);
@@ -345,23 +345,26 @@ void SENSING_MODE(void){
 	PORTD |=(1<<3);
 	PORTB &=~(1<<0);
 	PORTC &=~(1<<4);
+	_delay_ms(100)
 	for (int r=1;r<=10;r++){//sense the red color intensity of the given surface
 		RED+=ADC_Read('5');
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 	PORTD &=~(1<<3);
 	PORTB |=(1<<0);
 	PORTC &=~(1<<4);
+	_delay_ms(100);
 	for (int r=1;r<=10;r++){ // sense the green color intensity of the surface
 		GREEN+=ADC_Read('5');
-		_delay_ms(100);
+		_delay_ms(10);
 	}
 	PORTD &=~(1<<3);
 	PORTB &=~(1<<0);
     PORTC |=(1<<4);
+	_delay_ms(100);
 	for (int r=1;r<=10;r++){ //sense the green color intensity of the Blue surface
 		 BLUE+=ADC_Read('5');
-		 _delay_ms(100);
+		 _delay_ms(10);
 	 }
 	PORTD &=~(1<<3);
 	PORTB &=~(1<<0);
