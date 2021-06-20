@@ -182,12 +182,12 @@ void CALIBRATION(void){
 	DDRB|=(1<<0); // make the required connected pins as output pins
 	DDRC|=(1<<4);
 	DDRD|=(1<<3);
-	eeprom_write_byte((uint8_t*)red_high_memory,0);
+	/*eeprom_write_byte((uint8_t*)red_high_memory,0);
 	eeprom_write_byte((uint8_t*)green_high_memory,0);
 	eeprom_write_byte((uint8_t*)blue_high_memory,0);
 	eeprom_write_byte((uint8_t*)red_low_memory,0);
 	eeprom_write_byte((uint8_t*)green_low_memory,0);
-	eeprom_write_byte((uint8_t*)blue_low_memory,0);
+	eeprom_write_byte((uint8_t*)blue_low_memory,0);*/
 	ADC_Init();
 	LCD_Clear();
  //display some useful messages
@@ -325,6 +325,7 @@ void CALIBRATION(void){
 	eeprom_update_byte((uint8_t*)red_low_memory,RED_LOW);
 	eeprom_update_byte((uint8_t*)green_low_memory,GREEN_LOW);
 	eeprom_update_byte((uint8_t*)blue_low_memory,BLUE_LOW);
+	eeprom_update_byte((uint8_t*)0x007,1);
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_print();
@@ -582,7 +583,6 @@ int main(void)
 		char key=keyfind();
 		if (key){
 			if (key=='1'){
-				eeprom_update_byte((uint8_t*)0x007,1);
 				CALIBRATION();
 			}
 			else if(key=='2'){
