@@ -3,9 +3,9 @@
 #endif
 #include <avr/io.h>
 #include <util/delay.h>  
+#include <avr/interrupt.h>
 #include <stdlib.h>
 #include <math.h>
-#include <avr/interrupt.h>
 #include <avr/eeprom.h>
 #define LCD_PORT PORTC //define the connected data port
 #define rs PB4
@@ -17,10 +17,11 @@
 #define green_low_memory 0x005
 #define blue_low_memory 0x006
 // initialized values for some readings
-long  int RED1,RED_HIGH=0,RED_LOW=0,RED_DUTY_CYCLE;
-long  int GREEN1,GREEN_HIGH=0,GREEN_LOW=0,GREEN_DUTY_CYCLE;
-long  int BLUE1,BLUE_HIGH=0,BLUE_LOW=0,BLUE_DUTY_CYCLE;
+long  int RED1,RED_HIGH=0,RED_LOW=0;
+long  int GREEN1,GREEN_HIGH=0,GREEN_LOW=0;
+long  int BLUE1,BLUE_HIGH=0,BLUE_LOW=0;
 unsigned char col1, row1;
+int GREEN_DUTY_CYCLE;int RED_DUTY_CYCLE;int BLUE_DUTY_CYCLE;
 unsigned char keypad[4][3]={{'1','2','3'},
 							{'4','5','6'},
 							{'7','8','9'},
@@ -41,13 +42,13 @@ void LIGHT_RGB_LED(void);
 
 /*function to give commands*/
 void lcd_command(unsigned char command){
-	LCD_PORT =(LCD_PORT & 0xF0)|((command & 0xF0)>>4);  //sending the upper nibble of the command
+	LCD_PORT =((command & 0xF0)>>4);  //sending the upper nibble of the command
 	PORTB &=~(1<<rs);  //disable the rs pin
 	PORTB |=(1<<en);   // make the rs resistor high
 	_delay_us(2);
 	PORTB &=~(1<<en);
 	_delay_us(200);
-	LCD_PORT=(LCD_PORT & 0xF0)| (command & 0x0F);  //sending the lower nibble of the command
+	LCD_PORT=(command & 0x0F);  //sending the lower nibble of the command
 	PORTB|=(1<<en);
 	_delay_us(2);
 	PORTB &=~(1<<en);
@@ -67,13 +68,13 @@ void LCD_INIT(void){
 }
 /*function to print a character on the LCD display*/
 void LCD_character(unsigned char data){
-	LCD_PORT =(LCD_PORT & 0xF0)|((data & 0xF0)>>4);  //sending the upper nibble of the character
+	LCD_PORT =((data & 0xF0)>>4);  //sending the upper nibble of the character
 	PORTB|=(1<<rs);
 	PORTB|=(1<<en);
 	_delay_us(2);
 	PORTB &=~(1<<en);
 	_delay_us(200);
-	LCD_PORT=(LCD_PORT & 0xF0)| (data & 0x0F); // sending the lower nibble of the character
+	LCD_PORT=(data & 0x0F); // sending the lower nibble of the character
 	PORTB|=(1<<en);
 	_delay_us(1);
 	PORTB &=~(1<<en);
@@ -89,12 +90,11 @@ void LCD_STRING(char *string1,int val){
 }
 /*function to clear the LCD display*/
 void LCD_Clear(void){
-	lcd_command(0x01); 
+	lcd_command(0x01);
 	_delay_ms(2);
 	lcd_command(0x80); //set the cursor to home position
 }
 /*user defined function to print the initial data instructions on the display*/
-
 char keyfind(void){
 	
 	while(1){
@@ -107,7 +107,7 @@ char keyfind(void){
 			_delay_ms(40);
 			col1 = (PIND & 0x07);    // read status of column
 		}while(col1 == 0x07);       // if any button is pressed then do the following
-		_delay_ms(20);
+		_delay_ms(200);
 		// now check for rows
 		PORTD = 0xE7;            /* check for pressed key in 1st row */
 		asm("NOP");
@@ -192,7 +192,7 @@ void CALIBRATION(void){
 	LCD_Clear();
  //display some useful messages
 	LCD_STRING("Calibrating",0x82);
-	LCD_STRING("Red Surface",0xC2);
+	LCD_STRING("Black Surface",0xC2);
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_STRING("Press # to start",0x80);
@@ -206,7 +206,7 @@ void CALIBRATION(void){
 		PORTC &=~(1<<4);
 		_delay_ms(2000);
 		for (int r=1;r<=10;r++){ //get the RED value from the surface(10 values 
-			RED_HIGH+=ADC_Read('5'); //to ensure the accuracy 
+			RED_LOW+=ADC_Read('5'); //to ensure the accuracy 
 			_delay_ms(10);
 		}
 		PORTD &=~(1<<3);
@@ -234,7 +234,7 @@ void CALIBRATION(void){
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_STRING("Calibrating",0x82);
-	LCD_STRING("GREEN surface",0xC1);
+	LCD_STRING("White surface",0xC1);
 	_delay_ms(1000);
 	LCD_Clear();
 	LCD_STRING("Press # to start",0x80); //same thing for the green surface as the red surface
@@ -255,34 +255,9 @@ void CALIBRATION(void){
 			PORTC &=~(1<<4);
 			_delay_ms(2000);
 			for (int r=1;r<=10;r++){
-				RED_LOW+=ADC_Read('5');
+				RED_HIGH+=ADC_Read('5');
 				_delay_ms(10);
 			}
-			PORTD &=~(1<<3);
-			PORTB &=~(1<<0);
-			PORTC |=(1<<4);
-			_delay_ms(2000);
-			for (int r=1;r<=10;r++){
-				BLUE_LOW+=ADC_Read('5');
-				_delay_ms(10);
-			}
-		}
-	LCD_Clear();
-	LCD_STRING("Done!",0x80);
-	PORTD &=~(1<<3);
-	PORTB &=~(1<<0);
-	PORTC &=~(1<<4);
-	_delay_ms(1000);
-	LCD_Clear();
-	LCD_STRING("Calibrating",0x82);
-	LCD_STRING("BLUE surface",0xC1);
-	_delay_ms(1000);
-	LCD_Clear();
-	LCD_STRING("Press # to start",0x80); // same procedure for the Blue Surface
-		char key4=keyfind();
-		if (key4=='#'){
-			LCD_Clear();
-			LCD_STRING("Calibrating",0x82);
 			PORTD &=~(1<<3);
 			PORTB &=~(1<<0);
 			PORTC |=(1<<4);
@@ -291,25 +266,9 @@ void CALIBRATION(void){
 				BLUE_HIGH+=ADC_Read('5');
 				_delay_ms(10);
 			}
-			PORTD |=(1<<3);
-			PORTB &=~(1<<0);
-			PORTC &=~(1<<4);
-			_delay_ms(2000);
-			for (int r=1;r<=10;r++){
-				RED_LOW+=ADC_Read('5');
-				_delay_ms(10);
-			}
-			PORTD &=~(1<<3);
-			PORTB |=(1<<0);
-			PORTC &=~(1<<4);
-			_delay_ms(2000);
-			for (int r=1;r<=10;r++){
-				GREEN_LOW+=ADC_Read('5');
-				_delay_ms(10);
-			}
 		}
 	LCD_Clear();
-	LCD_STRING("Done!",0x85);
+	LCD_STRING("Done!",0x80);
 	PORTD &=~(1<<3);
 	PORTB &=~(1<<0);
 	PORTC &=~(1<<4);
@@ -335,6 +294,7 @@ void SENSING_MODE(void){
 	DDRB|=(1<<0); // make the required connected pins as output pins
 	DDRC|=(1<<4);
 	DDRD|=(1<<3);
+	RED1=0;BLUE1=0;GREEN1=0;
 	char REDs[3];
 	char GREENs[3];
 	char BLUEs[3];
@@ -399,7 +359,7 @@ void SENSING_MODE(void){
 	 LCD_Clear();
 	 LCD_print();
  }
- void pwmStart(void){
+ void pwmStart(){
 	 DDRB|=(1<<3)|(1<<2)|(1<<1);
 	 TCCR2A=(1<<COM2A1)|(1<<WGM20)|(1<<WGM21); //set the OC2A port for fast PMW non inverting method
 	 TCCR1A=(1<<COM1B1)|(1<<WGM10)|(1<<COM1A1)|(1<<WGM12);
@@ -413,11 +373,11 @@ void SENSING_MODE(void){
 	 TCCR1B=(1<<CS10)|(1<<CS12);
  }
  void pwmStop(){
-	 TCCR2A &=~(1<<COM2A1)& ~(1<<WGM20)& ~(1<<WGM21);
-	 TCCR1A &=~(1<<COM1B1)& ~(1<<WGM10) & ~(1<<COM1A1)& ~(1<<WGM12);
-	 TCCR2B=0;
-	 TCCR1A=0;
-	 cli();
+	  TCCR2A &=~(1<<COM2A1)& ~(1<<WGM20)& ~(1<<WGM21);
+	  TCCR1A &=~(1<<COM1B1)& ~(1<<WGM10) & ~(1<<COM1A1)& ~(1<<WGM12);
+	  cli();
+	  TCCR2B&=~(1<<CS22)&~(1<<CS21)&~(1<<CS20);
+	  TCCR1B&=~(1<<CS10)&~(1<<CS12);
  }
 void LIGHT_RGB_LED(void){
 	LCD_Clear();
@@ -443,6 +403,7 @@ void LIGHT_RGB_LED(void){
 			_delay_ms(60);
 		}
 		else if (key1=='#'){
+			_delay_ms(20);
 			/*if the entered value is greater than
 			then display the following message to enter a new number*/
 			if (val1>255){
@@ -464,7 +425,7 @@ void LIGHT_RGB_LED(void){
 			if (pos!=0){
 				lcd_command(0xC0|(pos-1));
 				LCD_character(' ');
-				_delay_ms(40);
+				_delay_ms(60);
 				val1=val1/10;
 				pos--;
 			}
@@ -485,6 +446,7 @@ void LIGHT_RGB_LED(void){
 			_delay_ms(60);
 		}
 		else if (key1=='#'){
+			_delay_ms(20);
 			/*if the entered value is greater than
 			then display the following message to enter a new number*/
 			if (val1>255){
@@ -506,7 +468,7 @@ void LIGHT_RGB_LED(void){
 			if (pos!=0){
 				lcd_command(0xC0|(pos-1));
 				LCD_character(' ');
-				_delay_ms(40);
+				_delay_ms(60);
 				val1=val1/10;
 				pos--;
 			}
@@ -527,6 +489,7 @@ void LIGHT_RGB_LED(void){
 			_delay_ms(60);
 		}
 		else if (key1=='#'){
+			_delay_ms(20);
 			/*if the entered value is greater than
 			then display the following message to enter a new number*/
 			if (val1>255){
@@ -548,7 +511,7 @@ void LIGHT_RGB_LED(void){
 			if (pos!=0){
 				lcd_command(0xC0|(pos-1));
 				LCD_character(' ');
-				_delay_ms(40);
+				_delay_ms(60);
 				val1=val1/10;
 				pos--;
 			}
@@ -573,7 +536,7 @@ void LIGHT_RGB_LED(void){
 	}
 }
 int main(void)
-{	
+{
 	LCD_INIT();
 	LCD_STRING("Hello world!",0x82);
 	LCD_STRING("Welcome!",0xC4);
@@ -605,13 +568,6 @@ int main(void)
 	return 0;
 }
 //to control the overflow of pwm 
-ISR(TIMER1_OVF_vect){
-	OCR1B=GREEN_DUTY_CYCLE;
-	OCR1A=RED_DUTY_CYCLE;
-}
-ISR(TIMER2_OVF_vect){
-	OCR2A=BLUE_DUTY_CYCLE;
-}
 void LCD_print(void){
 	LCD_Clear();
 	LCD_STRING("Select the mode!",0x80);
@@ -629,4 +585,11 @@ void LCD_print(void){
 	LCD_STRING("3:Light the RGB",0x80);
  //set  the cursor at the 2nd row 3rd column
 	LCD_STRING("LED",0xC5);
+}
+ISR(TIMER1_OVF_vect){
+	OCR1A=RED_DUTY_CYCLE;
+	OCR1B=GREEN_DUTY_CYCLE;
+}
+ISR(TIMER2_OVF_vect){
+	OCR2A=BLUE_DUTY_CYCLE;
 }
